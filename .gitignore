@@ -1,0 +1,327 @@
+# LangChain Agent Project v0.01 - .gitignore
+# ================================================
+
+# Python
+# --------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# LangChain & AI specific
+# -----------------------
+# API Keys and secrets
+*.key
+*.secret
+api_keys.txt
+secrets.json
+config/secrets/
+.env.local
+.env.production
+
+# Model files and caches
+models/
+*.bin
+*.safetensors
+*.gguf
+*.ggml
+model_cache/
+huggingface_cache/
+transformers_cache/
+
+# Vector databases
+chroma_db/
+faiss_index/
+pinecone_cache/
+weaviate_data/
+*.index
+*.pkl
+*.pickle
+
+# Memory and conversation history
+memory/
+conversations/
+chat_history/
+session_data/
+*.memory
+*.history
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+test_*.py
+debug_*.py
+scratch_*.py
+
+# Logs and monitoring
+logs/
+*.log
+*.log.*
+monitoring/
+metrics/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+database/
+data/
+
+# OS specific
+# -----------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Project specific
+# ----------------
+# Test outputs
+test_results/
+test_outputs/
+screenshots/
+recordings/
+
+# Documentation builds
+docs/build/
+docs/_build/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*_backup.*
+
+# IDE and editor files
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Version control
+.git/
+.svn/
+.hg/
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Large files that shouldn't be in git
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wav
+*.mp3
+*.flac
+
+# Custom exclusions for this project
+# -----------------------------------
+# Remove any test files we created during development
+test_*.py
+check_*.py
+debug_*.py
+
+# Exclude any personal configuration
+personal_config.py
+my_*.py
+
+# Current project specific ignores
+# --------------------------------
+# Vector database (already created)
+chroma_db/
+
+# Log files (already created)
+logs/
+frontend/logs/
+
+# Python cache (already created)
+backend/__pycache__/
+
+# Keep VERSION file for version tracking
+# VERSION file should be tracked
+
+# Git initialization scripts (one-time use)
+init_git.bat
+init_git.sh

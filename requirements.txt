@@ -1,0 +1,37 @@
+# LangChain core dependencies
+langchain>=0.1.0
+langchain-community>=0.0.20
+langchain-core>=0.1.0
+langchain-experimental>=0.0.50
+langgraph>=0.0.40
+
+# Local model support
+langchain-ollama>=0.1.0
+
+# Vector database and embeddings
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Tools and utilities
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Logging and debugging
+loguru>=0.7.0
+
+# Development and testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+
+# MCP protocol support
+mcp>=0.1.0
+
+# Frontend frameworks
+streamlit>=1.28.0
+gradio>=4.0.0
+fastapi>=0.104.0
+uvicorn>=0.24.0
