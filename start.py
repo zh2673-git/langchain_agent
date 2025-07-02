@@ -1,51 +1,52 @@
 #!/usr/bin/env python3
 """
-LangChain Agent 项目启动脚本
+快速启动脚本 - 用于测试和开发
 """
 
 import sys
-import os
 import subprocess
+from pathlib import Path
 
 def main():
-    print("🤖 LangChain Agent 实践项目")
-    print("=" * 50)
-    print("完全基于 LangChain 官方源码实现的智能 Agent 系统")
-    print()
+    """主函数"""
+    print("🚀 LangChain Agent 快速启动")
+    print("=" * 40)
     
-    print("请选择启动方式:")
-    print("1. 启动 Gradio Web 界面 (推荐)")
-    print("2. 运行功能测试")
-    print("3. 退出")
-    print()
+    if len(sys.argv) < 2:
+        print("使用方式:")
+        print("  python start.py 1    # Gradio界面")
+        print("  python start.py 2    # OpenWebUI服务器")
+        print("  python start.py 3    # 后端交互")
+        return
     
-    while True:
-        choice = input("请输入选择 (1-3): ").strip()
-        
-        if choice == "1":
-            print("\n🚀 启动 Gradio Web 界面...")
-            try:
-                subprocess.run([sys.executable, "frontend/gradio_app.py"], check=True)
-            except KeyboardInterrupt:
-                print("\n👋 应用已停止")
-            except Exception as e:
-                print(f"\n❌ 启动失败: {e}")
-            break
-            
-        elif choice == "2":
-            print("\n🧪 运行功能测试...")
-            try:
-                subprocess.run([sys.executable, "test_langchain_implementation.py"], check=True)
-            except Exception as e:
-                print(f"\n❌ 测试失败: {e}")
-            break
-            
-        elif choice == "3":
-            print("\n👋 再见!")
-            break
-            
-        else:
-            print("❌ 无效选择，请输入 1-3")
+    mode = sys.argv[1]
+    
+    # 检查是否在正确的conda环境中
+    try:
+        result = subprocess.run(
+            ["conda", "info", "--envs"], 
+            capture_output=True, 
+            text=True, 
+            check=True
+        )
+        if "langchain_agent_env" not in result.stdout:
+            print("⚠️  建议创建专用conda环境:")
+            print("   conda create -n langchain_agent_env python=3.11")
+            print("   conda activate langchain_agent_env")
+            print("   pip install -r requirements.txt")
+            print()
+    except:
+        pass
+    
+    # 启动应用
+    try:
+        subprocess.run([sys.executable, "main/app.py", mode], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 启动失败: {e}")
+        print("\n💡 可能的解决方案:")
+        print("1. 确保已安装所有依赖: pip install -r requirements.txt")
+        print("2. 确保Ollama正在运行: ollama serve")
+        print("3. 检查Python环境是否正确")
 
 if __name__ == "__main__":
     main()

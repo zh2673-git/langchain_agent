@@ -1,0 +1,109 @@
+{
+  "name": "LangChain Agent Tools",
+  "description": "LangChain Agent系统工具集",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "agent_configurator",
+      "file": "agent_configurator.py",
+      "description": "Agent配置工具",
+      "enabled": true
+    },
+    {
+      "name": "calculate",
+      "file": "calculate.py",
+      "description": "OpenWebUI工具: calculate",
+      "enabled": true
+    },
+    {
+      "name": "calculator",
+      "file": "calculator.py",
+      "description": "OpenWebUI工具: calculator",
+      "enabled": true
+    },
+    {
+      "name": "date_calculator",
+      "file": "date_calculator.py",
+      "description": "OpenWebUI工具: date_calculator",
+      "enabled": true
+    },
+    {
+      "name": "extract_information",
+      "file": "extract_information.py",
+      "description": "OpenWebUI工具: extract_information",
+      "enabled": true
+    },
+    {
+      "name": "format_timestamp",
+      "file": "format_timestamp.py",
+      "description": "OpenWebUI工具: format_timestamp",
+      "enabled": true
+    },
+    {
+      "name": "generate_uuid",
+      "file": "generate_uuid.py",
+      "description": "OpenWebUI工具: generate_uuid",
+      "enabled": true
+    },
+    {
+      "name": "get_current_time",
+      "file": "get_current_time.py",
+      "description": "OpenWebUI工具: get_current_time",
+      "enabled": true
+    },
+    {
+      "name": "list_files",
+      "file": "list_files.py",
+      "description": "OpenWebUI工具: list_files",
+      "enabled": true
+    },
+    {
+      "name": "list_processor",
+      "file": "list_processor.py",
+      "description": "OpenWebUI工具: list_processor",
+      "enabled": true
+    },
+    {
+      "name": "model_switcher",
+      "file": "model_switcher.py",
+      "description": "OpenWebUI工具: 模型切换器",
+      "enabled": true
+    },
+    {
+      "name": "read_file",
+      "file": "read_file.py",
+      "description": "OpenWebUI工具: read_file",
+      "enabled": true
+    },
+    {
+      "name": "string_processor",
+      "file": "string_processor.py",
+      "description": "OpenWebUI工具: string_processor",
+      "enabled": true
+    },
+    {
+      "name": "weather_query",
+      "file": "weather_query.py",
+      "description": "OpenWebUI工具: weather_query",
+      "enabled": true
+    },
+    {
+      "name": "web_search",
+      "file": "web_search.py",
+      "description": "OpenWebUI工具: web_search",
+      "enabled": true
+    },
+    {
+      "name": "wikipedia_search",
+      "file": "wikipedia_search.py",
+      "description": "OpenWebUI工具: wikipedia_search",
+      "enabled": true
+    },
+    {
+      "name": "write_file",
+      "file": "write_file.py",
+      "description": "OpenWebUI工具: write_file",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain Agent 配置</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            margin-bottom: 24px;
+        }
+        .section {
+            margin-bottom: 32px;
+        }
+        .section h2 {
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .mode-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-card:hover {
+            border-color: #3b82f6;
+        }
+        .mode-card.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        .mode-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .mode-desc {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .model-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status.error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .tool-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+        }
+        .tool-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .tool-desc {
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 LangChain Agent 配置</h1>
+        
+        <div class="section">
+            <h2>选择 Agent 模式</h2>
+            <div class="mode-grid">
+                <div class="mode-card" onclick="selectMode('chain')" id="mode-chain">
+                    <div class="mode-name">🔗 Chain Agent</div>
+                    <div class="mode-desc">简单对话和基础任务</div>
+                </div>
+                <div class="mode-card" onclick="selectMode('agent')" id="mode-agent">
+                    <div class="mode-name">🛠️ Tool Agent</div>
+                    <div class="mode-desc">工具调用和复杂任务</div>
+                </div>
+                <div class="mode-card" onclick="selectMode('langgraph')" id="mode-langgraph">
+                    <div class="mode-name">🕸️ Graph Agent</div>
+                    <div class="mode-desc">复杂工作流和状态管理</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>选择模型</h2>
+            <select class="model-select" id="model-select">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+        
+        <div class="section">
+            <button class="btn" onclick="applyConfig()">应用配置</button>
+            <button class="btn" onclick="testChat()" style="background: #059669;">测试对话</button>
+            <button class="btn" onclick="loadTools()" style="background: #7c3aed;">查看工具</button>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div class="section" id="tools-section" style="display: none;">
+            <h2>可用工具</h2>
+            <div id="tools-list" class="tools-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMode = 'chain';
+        let availableModels = [];
+
+        // 初始化
+        async function init() {
+            await loadModels();
+            selectMode('chain');
+        }
+
+        // 选择模式
+        function selectMode(mode) {
+            selectedMode = mode;
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById(`mode-${mode}`).classList.add('selected');
+        }
+
+        // 加载模型
+        async function loadModels() {
+            try {
+                const response = await fetch('/api/tags');
+                const data = await response.json();
+                availableModels = data.models || [];
+                
+                const select = document.getElementById('model-select');
+                select.innerHTML = '';
+                
+                availableModels.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = `${model.name} (${(model.size / 1000000000).toFixed(1)}GB)`;
+                    select.appendChild(option);
+                });
+                
+                if (availableModels.length > 0) {
+                    select.value = availableModels[0].name;
+                }
+            } catch (error) {
+                showStatus('加载模型失败: ' + error.message, 'error');
+            }
+        }
+
+        // 应用配置
+        async function applyConfig() {
+            const model = document.getElementById('model-select').value;
+            if (!model) {
+                showStatus('请选择模型', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/v1/agent/configure', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: selectedMode,
+                        model: model
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus(`配置成功！${selectedMode} Agent 现在使用 ${model} 模型`, 'success');
+                } else {
+                    showStatus('配置失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showStatus('配置失败: ' + error.message, 'error');
+            }
+        }
+
+        // 测试对话
+        async function testChat() {
+            const model = document.getElementById('model-select').value;
+            if (!model) {
+                showStatus('请先配置模型', 'error');
+                return;
+            }
+
+            try {
+                showStatus('正在测试对话...', 'success');
+                
+                const response = await fetch('/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: `langchain-${selectedMode}-mode`,
+                        messages: [
+                            {
+                                role: 'user',
+                                content: '你好，请介绍一下你当前的配置'
+                            }
+                        ],
+                        stream: false
+                    })
+                });
+
+                const result = await response.json();
+                const content = result.choices?.[0]?.message?.content || '无响应';
+                
+                showStatus(`测试成功！回复: ${content.substring(0, 100)}...`, 'success');
+            } catch (error) {
+                showStatus('测试失败: ' + error.message, 'error');
+            }
+        }
+
+        // 加载工具
+        async function loadTools() {
+            try {
+                const response = await fetch('/v1/tools');
+                const data = await response.json();
+                const tools = data.tools || [];
+                
+                const toolsSection = document.getElementById('tools-section');
+                const toolsList = document.getElementById('tools-list');
+                
+                toolsList.innerHTML = '';
+                
+                tools.forEach(tool => {
+                    const toolCard = document.createElement('div');
+                    toolCard.className = 'tool-card';
+                    toolCard.innerHTML = `
+                        <div class="tool-name">${tool.name}</div>
+                        <div class="tool-desc">${tool.description || '暂无描述'}</div>
+                    `;
+                    toolsList.appendChild(toolCard);
+                });
+                
+                toolsSection.style.display = 'block';
+                showStatus(`加载了 ${tools.length} 个工具`, 'success');
+            } catch (error) {
+                showStatus('加载工具失败: ' + error.message, 'error');
+            }
+        }
+
+        // 显示状态
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

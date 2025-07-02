@@ -1,0 +1,60 @@
+# 快速构建版本 - 使用国内镜像源
+# Docker Compose file for LangChain Agent (Fast Build)
+
+services:
+  # LangChain Agent 后端API服务
+  langchain-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend.fast
+      args:
+        - HTTP_PROXY=${HTTP_PROXY:-}
+        - HTTPS_PROXY=${HTTPS_PROXY:-}
+        - NO_PROXY=${NO_PROXY:-}
+    container_name: langchain-agent-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # 如果使用OpenAI/Anthropic，取消注释并设置API密钥
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ../data:/app/data  # 持久化数据存储
+      - ../logs:/app/logs  # 日志存储
+    networks:
+      - langchain-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # OpenWebUI 前端界面
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui-frontend
+    ports:
+      - "3000:8080"
+    environment:
+      - OPENAI_API_BASE_URL=http://langchain-backend:8000/v1
+      - OPENAI_API_KEY=dummy-key  # 我们的API不验证密钥
+      - WEBUI_SECRET_KEY=your-secret-key-here
+    volumes:
+      - openwebui-data:/app/backend/data
+    networks:
+      - langchain-network
+    depends_on:
+      langchain-backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  langchain-network:
+    driver: bridge
+
+volumes:
+  openwebui-data:
+    driver: local

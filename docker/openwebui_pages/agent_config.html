@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent配置 - LangChain Agent System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .config-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1f2937;
+        }
+        
+        .agent-mode {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .agent-mode:hover {
+            border-color: #3b82f6;
+            background: #f8faff;
+        }
+        
+        .agent-mode.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        
+        .mode-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .mode-icon {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+        
+        .mode-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .mode-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .mode-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .feature-tag {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .model-selector {
+            margin-top: 16px;
+        }
+        
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .model-option {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .model-option:hover {
+            border-color: #3b82f6;
+            background: #f8faff;
+        }
+        
+        .model-option.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        
+        .model-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .model-size {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        
+        .tools-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .tool-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+        
+        .tool-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .tool-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        
+        .tool-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .tool-category {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-inactive {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 LangChain Agent 配置中心</h1>
+            <p>选择Agent模式和模型，配置您的智能助手</p>
+        </div>
+        
+        <div class="config-grid">
+            <!-- Agent模式选择 -->
+            <div class="config-section">
+                <h2 class="section-title">🔧 Agent模式</h2>
+                <div id="agent-modes">
+                    <!-- 动态加载Agent模式 -->
+                </div>
+            </div>
+            
+            <!-- 模型选择 -->
+            <div class="config-section">
+                <h2 class="section-title">🧠 模型选择</h2>
+                <div class="model-selector">
+                    <label for="model-provider">模型供应商:</label>
+                    <select id="model-provider" style="width: 100%; padding: 8px; margin-top: 8px; border-radius: 4px; border: 1px solid #d1d5db;">
+                        <option value="ollama">Ollama (本地)</option>
+                    </select>
+                </div>
+                <div id="available-models" class="model-grid">
+                    <!-- 动态加载可用模型 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 工具管理 -->
+        <div class="tools-section">
+            <h2 class="section-title">🛠️ 可用工具</h2>
+            <div class="status-indicator status-active">
+                <span>●</span>
+                <span id="tools-count">加载中...</span>
+            </div>
+            <div id="tools-list" class="tools-grid">
+                <!-- 动态加载工具列表 -->
+            </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="applyConfiguration()">应用配置</button>
+            <button class="btn btn-secondary" onclick="resetConfiguration()">重置配置</button>
+            <button class="btn btn-secondary" onclick="loadRecommendations()">获取推荐</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedMode = 'chain';
+        let selectedModel = 'qwen2.5:7b';
+        let availableModels = [];
+        let tools = [];
+
+        // 初始化页面
+        async function initializePage() {
+            await loadAgentModes();
+            await loadAvailableModels();
+            await loadTools();
+            await loadCurrentConfig();
+        }
+
+        // 加载Agent模式
+        async function loadAgentModes() {
+            try {
+                const response = await fetch('/v1/agent/modes');
+                const data = await response.json();
+                
+                const modesContainer = document.getElementById('agent-modes');
+                modesContainer.innerHTML = '';
+                
+                Object.entries(data.modes).forEach(([id, mode]) => {
+                    const modeElement = document.createElement('div');
+                    modeElement.className = `agent-mode ${id === selectedMode ? 'selected' : ''}`;
+                    modeElement.onclick = () => selectMode(id);
+                    
+                    modeElement.innerHTML = `
+                        <div class="mode-header">
+                            <span class="mode-icon">${getIconForMode(id)}</span>
+                            <span class="mode-name">${mode.name}</span>
+                        </div>
+                        <div class="mode-description">${mode.description}</div>
+                        <div class="mode-features">
+                            ${mode.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                        </div>
+                    `;
+                    
+                    modesContainer.appendChild(modeElement);
+                });
+            } catch (error) {
+                console.error('Failed to load agent modes:', error);
+            }
+        }
+
+        // 加载可用模型
+        async function loadAvailableModels() {
+            try {
+                // 从Ollama获取模型列表
+                const response = await fetch('/api/tags');
+                const data = await response.json();
+                
+                availableModels = data.models || [];
+                renderModels();
+            } catch (error) {
+                console.error('Failed to load models:', error);
+                // 使用默认模型列表
+                availableModels = [
+                    { name: 'qwen2.5:7b', size: '7B' },
+                    { name: 'qwen2.5:14b', size: '14B' },
+                    { name: 'llama3.1:8b', size: '8B' },
+                    { name: 'mistral:7b', size: '7B' }
+                ];
+                renderModels();
+            }
+        }
+
+        // 渲染模型列表
+        function renderModels() {
+            const modelsContainer = document.getElementById('available-models');
+            modelsContainer.innerHTML = '';
+            
+            availableModels.forEach(model => {
+                const modelElement = document.createElement('div');
+                modelElement.className = `model-option ${model.name === selectedModel ? 'selected' : ''}`;
+                modelElement.onclick = () => selectModel(model.name);
+                
+                modelElement.innerHTML = `
+                    <div class="model-name">${model.name}</div>
+                    <div class="model-size">${model.size || 'Unknown'}</div>
+                `;
+                
+                modelsContainer.appendChild(modelElement);
+            });
+        }
+
+        // 加载工具列表
+        async function loadTools() {
+            try {
+                const response = await fetch('/v1/tools');
+                const data = await response.json();
+                
+                tools = data.tools || [];
+                renderTools();
+            } catch (error) {
+                console.error('Failed to load tools:', error);
+            }
+        }
+
+        // 渲染工具列表
+        function renderTools() {
+            const toolsContainer = document.getElementById('tools-list');
+            const toolsCount = document.getElementById('tools-count');
+            
+            toolsCount.textContent = `${tools.length} 个工具可用`;
+            toolsContainer.innerHTML = '';
+            
+            tools.forEach(tool => {
+                const toolElement = document.createElement('div');
+                toolElement.className = 'tool-card';
+                
+                toolElement.innerHTML = `
+                    <div class="tool-name">${tool.name}</div>
+                    <div class="tool-description">${tool.description || '暂无描述'}</div>
+                    <span class="tool-category">${getCategoryName(tool.category || 'custom')}</span>
+                `;
+                
+                toolsContainer.appendChild(toolElement);
+            });
+        }
+
+        // 选择模式
+        function selectMode(mode) {
+            selectedMode = mode;
+            document.querySelectorAll('.agent-mode').forEach(el => {
+                el.classList.toggle('selected', el.onclick.toString().includes(mode));
+            });
+        }
+
+        // 选择模型
+        function selectModel(model) {
+            selectedModel = model;
+            document.querySelectorAll('.model-option').forEach(el => {
+                el.classList.toggle('selected', el.onclick.toString().includes(model));
+            });
+        }
+
+        // 应用配置
+        async function applyConfiguration() {
+            try {
+                const response = await fetch('/v1/agent/configure', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: selectedMode,
+                        model: selectedModel
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`配置成功！${selectedMode} Agent 现在使用 ${selectedModel} 模型`);
+                } else {
+                    alert(`配置失败：${result.message}`);
+                }
+            } catch (error) {
+                alert(`配置失败：${error.message}`);
+            }
+        }
+
+        // 重置配置
+        function resetConfiguration() {
+            selectedMode = 'chain';
+            selectedModel = 'qwen2.5:7b';
+            loadAgentModes();
+            renderModels();
+        }
+
+        // 加载推荐配置
+        async function loadRecommendations() {
+            try {
+                const response = await fetch('/v1/agent/recommendations');
+                const data = await response.json();
+                
+                const recommendations = data.recommendations.by_task;
+                let message = '推荐配置：\n\n';
+                
+                Object.entries(recommendations).forEach(([task, rec]) => {
+                    message += `${task}: ${rec.recommended_mode} + ${rec.recommended_model}\n`;
+                    message += `原因: ${rec.reason}\n\n`;
+                });
+                
+                alert(message);
+            } catch (error) {
+                alert('获取推荐失败');
+            }
+        }
+
+        // 加载当前配置
+        async function loadCurrentConfig() {
+            try {
+                const response = await fetch('/v1/agent/current-config');
+                const data = await response.json();
+                
+                // 这里可以根据当前配置更新界面
+                console.log('Current config:', data);
+            } catch (error) {
+                console.error('Failed to load current config:', error);
+            }
+        }
+
+        // 辅助函数
+        function getIconForMode(mode) {
+            const icons = {
+                'chain': '🔗',
+                'agent': '🛠️',
+                'langgraph': '🕸️'
+            };
+            return icons[mode] || '🤖';
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'builtin': '内置',
+                'community': '社区',
+                'custom': '自定义',
+                'mcp': 'MCP'
+            };
+            return names[category] || '其他';
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+{
+  "tools": [
+    {
+      "name": "agent_configurator",
+      "description": "配置和管理LangChain Agent模式和模型",
+      "enabled": true,
+      "file": "agent_configurator.py",
+      "function": "agent_configurator",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "操作类型",
+            "enum": ["list_modes", "list_models", "configure", "get_current", "test_chat", "recommendations"]
+          },
+          "mode": {
+            "type": "string",
+            "description": "Agent模式 (chain, agent, langgraph)",
+            "enum": ["chain", "agent", "langgraph"]
+          },
+          "model": {
+            "type": "string",
+            "description": "模型名称 (如 qwen2.5:7b)"
+          }
+        },
+        "required": ["action"]
+      }
+    },
+    {
+      "name": "calculate",
+      "description": "执行数学计算",
+      "enabled": true,
+      "file": "calculate.py",
+      "function": "calculate"
+    },
+    {
+      "name": "calculator",
+      "description": "基础计算器功能",
+      "enabled": true,
+      "file": "calculator.py",
+      "function": "calculator"
+    },
+    {
+      "name": "get_current_time",
+      "description": "获取当前时间",
+      "enabled": true,
+      "file": "get_current_time.py",
+      "function": "get_current_time"
+    },
+    {
+      "name": "format_timestamp",
+      "description": "格式化时间戳",
+      "enabled": true,
+      "file": "format_timestamp.py",
+      "function": "format_timestamp"
+    },
+    {
+      "name": "date_calculator",
+      "description": "日期计算工具",
+      "enabled": true,
+      "file": "date_calculator.py",
+      "function": "date_calculator"
+    },
+    {
+      "name": "web_search",
+      "description": "网络搜索工具",
+      "enabled": true,
+      "file": "web_search.py",
+      "function": "web_search"
+    },
+    {
+      "name": "wikipedia_search",
+      "description": "Wikipedia搜索工具",
+      "enabled": true,
+      "file": "wikipedia_search.py",
+      "function": "wikipedia_search"
+    },
+    {
+      "name": "weather_query",
+      "description": "天气查询工具",
+      "enabled": true,
+      "file": "weather_query.py",
+      "function": "weather_query"
+    },
+    {
+      "name": "read_file",
+      "description": "读取文件内容",
+      "enabled": true,
+      "file": "read_file.py",
+      "function": "read_file"
+    },
+    {
+      "name": "write_file",
+      "description": "写入文件内容",
+      "enabled": true,
+      "file": "write_file.py",
+      "function": "write_file"
+    },
+    {
+      "name": "list_files",
+      "description": "列出目录文件",
+      "enabled": true,
+      "file": "list_files.py",
+      "function": "list_files"
+    },
+    {
+      "name": "string_processor",
+      "description": "字符串处理工具",
+      "enabled": true,
+      "file": "string_processor.py",
+      "function": "string_processor"
+    },
+    {
+      "name": "list_processor",
+      "description": "列表处理工具",
+      "enabled": true,
+      "file": "list_processor.py",
+      "function": "list_processor"
+    },
+    {
+      "name": "extract_information",
+      "description": "信息提取工具",
+      "enabled": true,
+      "file": "extract_information.py",
+      "function": "extract_information"
+    },
+    {
+      "name": "generate_uuid",
+      "description": "生成UUID",
+      "enabled": true,
+      "file": "generate_uuid.py",
+      "function": "generate_uuid"
+    },
+    {
+      "name": "model_switcher",
+      "description": "模型切换工具",
+      "enabled": true,
+      "file": "model_switcher.py",
+      "function": "model_switcher"
+    }
+  ],
+  "version": "1.0.0",
+  "description": "LangChain Agent System Tools",
+  "total_tools": 17
+}

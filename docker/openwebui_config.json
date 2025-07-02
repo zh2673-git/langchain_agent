@@ -1,0 +1,111 @@
+{
+  "ui": {
+    "title": "LangChain Agent System",
+    "description": "智能Agent系统，支持多种模式和模型组合",
+    "features": {
+      "agent_mode_selection": true,
+      "model_switching": true,
+      "tool_management": true,
+      "custom_models": true
+    }
+  },
+  "agent_modes": [
+    {
+      "id": "chain",
+      "name": "Chain Agent",
+      "description": "基于Runnable接口的简单Agent，适合日常对话和简单任务",
+      "icon": "🔗",
+      "features": ["快速响应", "简单对话", "基础工具调用"],
+      "use_cases": ["日常对话", "简单计算", "信息查询"],
+      "default_model": "qwen2.5:7b"
+    },
+    {
+      "id": "agent", 
+      "name": "Tool Agent",
+      "description": "支持工具调用的智能Agent，适合复杂任务处理",
+      "icon": "🛠️",
+      "features": ["工具调用", "推理能力", "多步骤任务"],
+      "use_cases": ["数据分析", "文件操作", "复杂计算"],
+      "default_model": "qwen2.5:7b"
+    },
+    {
+      "id": "langgraph",
+      "name": "Graph Agent", 
+      "description": "基于状态图的高级Agent，适合复杂工作流",
+      "icon": "🕸️",
+      "features": ["状态管理", "复杂工作流", "条件分支"],
+      "use_cases": ["多步骤分析", "决策流程", "复杂业务逻辑"],
+      "default_model": "qwen2.5:7b"
+    }
+  ],
+  "model_providers": [
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "description": "本地Ollama模型服务",
+      "api_base": "http://host.docker.internal:11434",
+      "models_endpoint": "/api/tags",
+      "supported": true
+    }
+  ],
+  "tools": {
+    "enabled": true,
+    "auto_discovery": true,
+    "categories": [
+      {
+        "id": "builtin",
+        "name": "内置工具",
+        "description": "系统内置的基础工具"
+      },
+      {
+        "id": "community", 
+        "name": "社区工具",
+        "description": "来自LangChain社区的工具"
+      },
+      {
+        "id": "custom",
+        "name": "自定义工具",
+        "description": "用户自定义的工具"
+      },
+      {
+        "id": "mcp",
+        "name": "MCP工具",
+        "description": "Model Context Protocol工具"
+      }
+    ]
+  },
+  "api": {
+    "base_url": "http://langchain-backend:8000",
+    "endpoints": {
+      "agent_modes": "/v1/agent/modes",
+      "available_models": "/v1/agent/models", 
+      "configure_agent": "/v1/agent/configure",
+      "tools_list": "/v1/tools",
+      "tools_config": "/v1/tools/config",
+      "chat": "/v1/chat/completions",
+      "models": "/v1/models"
+    }
+  },
+  "recommendations": {
+    "daily_chat": {
+      "mode": "chain",
+      "model": "qwen2.5:7b",
+      "reason": "快速响应，适合日常对话"
+    },
+    "complex_analysis": {
+      "mode": "agent",
+      "model": "qwen2.5:14b", 
+      "reason": "强大推理能力，支持复杂工具调用"
+    },
+    "workflow_automation": {
+      "mode": "langgraph",
+      "model": "llama3.1:8b",
+      "reason": "优秀的逻辑推理，适合复杂工作流"
+    },
+    "creative_writing": {
+      "mode": "chain",
+      "model": "mistral:7b",
+      "reason": "创意能力强，多语言支持好"
+    }
+  }
+}

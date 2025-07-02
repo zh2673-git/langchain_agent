@@ -1,0 +1,96 @@
+# Docker Compose file for LangChain Agent
+# Note: version field is deprecated in newer Docker Compose versions
+
+services:
+  # LangChain Agent 后端API服务
+  langchain-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: langchain-agent-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # 如果使用OpenAI/Anthropic，取消注释并设置API密钥
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ../data:/app/data  # 持久化数据存储
+      - ../logs:/app/logs  # 日志存储
+    networks:
+      - langchain-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # OpenWebUI 前端界面
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui-frontend
+    ports:
+      - "3000:8080"
+    environment:
+      - OPENAI_API_BASE_URL=http://langchain-backend:8000/v1
+      - OPENAI_API_KEY=dummy-key  # 我们的API不验证密钥
+      - WEBUI_SECRET_KEY=your-secret-key-here
+      # 强制使用非流式模式以兼容LangChain后端
+      - DEFAULT_MODELS=langchain-chain,langchain-agent,langchain-langgraph
+      - ENABLE_OPENAI_API=true
+      - OPENAI_API_STREAM=false
+      # 禁用认证以简化测试
+      - WEBUI_AUTH=false
+      - ENABLE_SIGNUP=true
+      - DEFAULT_USER_ROLE=admin
+      # 启用工具和函数调用显示
+      - ENABLE_OPENAI_API_TOOLS=true
+      - SHOW_ADMIN_DETAILS=true
+      - ENABLE_MODEL_FILTER=true
+      # 自定义功能
+      - ENABLE_COMMUNITY_SHARING=false
+      - ENABLE_MESSAGE_RATING=true
+      # Agent配置页面
+      - CUSTOM_NAME=LangChain Agent System
+      - ENABLE_ADMIN_EXPORT=true
+      - ENABLE_ADMIN_CHAT_ACCESS=true
+    volumes:
+      - openwebui-data:/app/backend/data
+      # 挂载自定义工具到OpenWebUI
+      - ./openwebui_tools:/app/backend/data/tools:rw
+    networks:
+      - langchain-network
+    depends_on:
+      langchain-backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Gradio Web界面（可选）
+  gradio-ui:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gradio
+    container_name: langchain-gradio-ui
+    ports:
+      - "7860:7860"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    networks:
+      - langchain-network
+    restart: unless-stopped
+    profiles:
+      - gradio  # 使用 --profile gradio 启动
+
+networks:
+  langchain-network:
+    driver: bridge
+
+volumes:
+  openwebui-data:
+    driver: local

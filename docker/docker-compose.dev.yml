@@ -1,0 +1,75 @@
+# 开发模式Docker Compose配置
+# 使用方式: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Development mode override for Docker Compose
+# Note: version field is deprecated in newer Docker Compose versions
+
+services:
+  # OpenWebUI 前端 (开发模式配置)
+  openwebui:
+    environment:
+      # 开发模式：强制非流式响应
+      - OPENAI_API_STREAM=false
+      - DEFAULT_MODELS=langchain-chain,langchain-agent,langchain-langgraph
+      - ENABLE_OPENAI_API=true
+      - WEBUI_DEBUG=true
+      # 开发模式：禁用认证
+      - WEBUI_AUTH=false
+      - ENABLE_SIGNUP=true
+      - DEFAULT_USER_ROLE=admin
+      # 开发模式：启用所有功能
+      - ENABLE_OPENAI_API_TOOLS=true
+      - SHOW_ADMIN_DETAILS=true
+      - ENABLE_MODEL_FILTER=true
+      - ENABLE_MESSAGE_RATING=true
+
+  # LangChain Agent 后端API服务 (开发模式)
+  langchain-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    volumes:
+      # 挂载源码目录，实现代码热更新（可读写）
+      - ../backend:/app/backend             # 挂载后端代码
+      - ../main:/app/main                   # 挂载启动脚本
+      - ../requirements.txt:/app/requirements.txt:ro  # 只读挂载依赖文件
+      # 数据目录保持可写
+      - ../data:/app/data
+      - ../logs:/app/logs
+    environment:
+      # 开发模式环境变量
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - DEBUG=true
+      - RELOAD=true
+      # Ollama配置（开发模式）
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    # 开发模式启动命令（支持热重载）
+    command: ["python", "-m", "uvicorn", "backend.api.openwebui_server:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/backend", "--reload-dir", "/app/main"]
+    # 开发模式健康检查（更宽松）
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v1/models"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    
+  # Gradio界面 (开发模式)
+  gradio-ui:
+    volumes:
+      # 挂载源码目录（可读写）
+      - ../backend:/app/backend
+      - ../frontend:/app/frontend
+      - ../main:/app/main
+      - ../requirements.txt:/app/requirements.txt:ro
+      # 数据目录
+      - ../data:/app/data
+      - ../logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - DEBUG=true
+      # Ollama配置（开发模式）
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    # 开发模式启动命令
+    command: ["python", "main/app.py", "gradio"]
